@@ -4,7 +4,8 @@ import * as $ from "jquery";
 import logo from "./logo.svg";
 import "./App.css";
 import Player from './Player'
-export const authEndpoint = 'https://accounts.spotify.com/authorize';
+
+const authEndpoint = 'https://accounts.spotify.com/authorize';
 // Replace with your app's client ID, redirect URI and desired scopes
 const clientId = "081df2bd9f3f4cc695277a3711ab3d56";
 const redirectUri = "http://localhost:3000/";
@@ -32,6 +33,19 @@ class App extends Component {
     };
     this.getCurrentlyPlaying = this.getCurrentlyPlaying.bind(this);
   }
+
+  componentDidMount() {
+    // Set token
+    let _token = hash.access_token;
+    if (_token) {
+      // Set token
+      this.setState({
+        token: _token
+      });
+      this.getCurrentlyPlaying(_token)
+    }
+  }
+
   getCurrentlyPlaying(token) {
     // Make a call using the token
     $.ajax({
@@ -50,17 +64,6 @@ class App extends Component {
     });
   }
 
-  componentDidMount() {
-    // Set token
-    let _token = hash.access_token;
-    if (_token) {
-      // Set token
-      this.setState({
-        token: _token
-      });
-    }
-  }
-
   render() {
     return (
       <div className="App">
@@ -69,7 +72,7 @@ class App extends Component {
           {!this.state.token && (
             <a
               className="btn btn--loginApp-link"
-              href={`${authEndpoint}client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
+              href={`${authEndpoint}?client_id=${clientId}&redirect_uri=${redirectUri}&scope=${scopes.join("%20")}&response_type=token&show_dialog=true`}
             >
               Login to Spotify
             </a>
